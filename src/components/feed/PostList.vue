@@ -11,10 +11,10 @@
 </template>
 
 <script setup>
-import PostCard from "./PostCard.vue"
+import PostCard from "./PostCard.vue";
 
 defineProps({
   posts: { type: Array, required: true },
-})
-defineEmits(["like", "delete"])
+});
+defineEmits(["like", "delete"]);
 </script>

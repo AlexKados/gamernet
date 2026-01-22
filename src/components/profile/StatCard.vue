@@ -9,5 +9,5 @@
 defineProps({
   label: { type: String, required: true },
   value: { type: [String, Number], required: true },
-})
+});
 </script>

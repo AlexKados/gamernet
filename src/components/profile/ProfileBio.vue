@@ -11,5 +11,5 @@
 defineProps({
   bio: { type: String, required: true },
   location: { type: String, required: true },
-})
+});
 </script>

@@ -6,7 +6,7 @@
         <span>GamerNet</span>
       </RouterLink>
 
-      <nav class="flex items-center gap-2">
+      <nav class="flex flex-wrap items-center gap-2">
         <RouterLink
           v-for="item in nav"
           :key="item.to"
@@ -31,9 +31,21 @@ const nav = computed(() => [
   { label: "Home", to: "/" },
   { label: "Explore", to: "/explore" },
   { label: "Profile", to: "/profile" },
+
+  { label: "Games", to: "/games" },
+  { label: "Players", to: "/players" },
+  { label: "Post", to: "/post/1" },
+
+  { label: "Messages", to: "/messages" },
+  { label: "Notifications", to: "/notifications" },
+
+  { label: "Settings", to: "/settings" },
+  { label: "About", to: "/about" },
 ])
 
 function isActive(path) {
+  // for dynamic routes like /post/1, highlight "Post" when path starts with /post
+  if (path.startsWith("/post/")) return route.path.startsWith("/post/")
   return route.path === path
 }
 </script>

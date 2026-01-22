@@ -7,18 +7,14 @@
 
     <PostComposer @create="addPost" />
 
-    <PostList
-      :posts="posts"
-      @like="toggleLike"
-      @delete="deletePost"
-    />
+    <PostList :posts="posts" @like="toggleLike" @delete="deletePost" />
   </section>
 </template>
 
 <script setup>
-import { ref } from "vue"
-import PostComposer from "../components/feed/PostComposer.vue"
-import PostList from "../components/feed/PostList.vue"
+import { ref } from "vue";
+import PostComposer from "../components/feed/PostComposer.vue";
+import PostList from "../components/feed/PostList.vue";
 
 const posts = ref([
   {
@@ -39,7 +35,7 @@ const posts = ref([
     likes: 41,
     createdAt: "2h ago",
   },
-])
+]);
 
 function addPost(payload) {
   const newPost = {
@@ -50,20 +46,20 @@ function addPost(payload) {
     liked: false,
     likes: 0,
     createdAt: "just now",
-  }
-  posts.value = [newPost, ...posts.value]
+  };
+  posts.value = [newPost, ...posts.value];
 }
 
 function toggleLike(postId) {
   posts.value = posts.value.map((p) => {
-    if (p.id !== postId) return p
-    const liked = !p.liked
-    const likes = liked ? p.likes + 1 : Math.max(0, p.likes - 1)
-    return { ...p, liked, likes }
-  })
+    if (p.id !== postId) return p;
+    const liked = !p.liked;
+    const likes = liked ? p.likes + 1 : Math.max(0, p.likes - 1);
+    return { ...p, liked, likes };
+  });
 }
 
 function deletePost(postId) {
-  posts.value = posts.value.filter((p) => p.id !== postId)
+  posts.value = posts.value.filter((p) => p.id !== postId);
 }
 </script>

@@ -17,23 +17,23 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
-import BaseButton from "../ui/BaseButton.vue"
-import BaseInput from "../ui/BaseInput.vue"
-import SelectInput from "../ui/SelectInput.vue"
+import { ref } from "vue";
+import BaseButton from "../ui/BaseButton.vue";
+import BaseInput from "../ui/BaseInput.vue";
+import SelectInput from "../ui/SelectInput.vue";
 
 const props = defineProps({
   games: { type: Array, required: true },
   query: { type: String, default: "" },
   game: { type: String, default: "" },
-})
+});
 
-const emit = defineEmits(["update"])
+const emit = defineEmits(["update"]);
 
-const localQuery = ref(props.query)
-const localGame = ref(props.game)
+const localQuery = ref(props.query);
+const localGame = ref(props.game);
 
 function emitFilters() {
-  emit("update", { query: localQuery.value, game: localGame.value })
+  emit("update", { query: localQuery.value, game: localGame.value });
 }
 </script>
