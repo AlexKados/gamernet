@@ -1,0 +1,5 @@
+if ("serviceWorker" in navigator)
+  navigator.serviceWorker.register("/gamernet/dev-sw.js?dev-sw", {
+    scope: "/gamernet/",
+    type: "classic",
+  })

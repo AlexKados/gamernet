@@ -8,9 +8,9 @@
 </template>
 
 <script setup>
-import StatCard from "./StatCard.vue";
+import StatCard from "./StatCard.vue"
 
 defineProps({
   stats: { type: Object, required: true },
-});
+})
 </script>

@@ -1,40 +1,42 @@
-import js from "@eslint/js";
-import globals from "globals";
-import vue from "eslint-plugin-vue";
-import vueParser from "vue-eslint-parser";
-import prettierConfig from "eslint-config-prettier";
-import prettierPlugin from "eslint-plugin-prettier";
+import js from "@eslint/js"
+import vue from "eslint-plugin-vue"
+import globals from "globals"
+import prettier from "eslint-plugin-prettier"
+import prettierConfig from "eslint-config-prettier"
 
 export default [
   {
-    ignores: ["dist/**", "node_modules/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      "dev-dist/**",
+      "sw.js",
+      "sw*.js",
+      "workbox-*.js",
+      "**/workbox-*.js",
+    ],
   },
 
   js.configs.recommended,
+  ...vue.configs["flat/recommended"],
 
   {
-    files: ["**/*.{js,mjs,cjs,vue}"],
+    files: ["**/*.{js,vue}"],
     languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
       globals: {
         ...globals.browser,
-        ...globals.node,
-      },
-      parser: vueParser,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
       },
     },
     plugins: {
-      vue,
-      prettier: prettierPlugin,
+      prettier,
     },
     rules: {
-      "vue/multi-word-component-names": "off",
-
+      ...prettierConfig.rules,
       "prettier/prettier": "warn",
+
+      "vue/multi-word-component-names": "off",
     },
   },
-
-  prettierConfig,
-];
+]

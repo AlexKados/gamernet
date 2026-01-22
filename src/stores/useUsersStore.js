@@ -14,9 +14,7 @@ export const useUsersStore = defineStore("users", {
   },
   actions: {
     toggleFollow(userId) {
-      this.users = this.users.map((u) =>
-        u.id === userId ? { ...u, following: !u.following } : u,
-      )
+      this.users = this.users.map((u) => (u.id === userId ? { ...u, following: !u.following } : u))
     },
     setUsers(list) {
       this.users = list

@@ -2,64 +2,63 @@
   <section class="space-y-6">
     <header class="space-y-2">
       <h1 class="text-3xl font-bold">Home</h1>
-      <p class="text-white/80">Welcome to GamerNet 🎮</p>
+      <p class="text-white/80">
+        Welcome to GamerNet 🎮
+        <span class="text-white/50">· {{ auth.displayName }}</span>
+      </p>
     </header>
 
-    <PostComposer @create="addPost" />
+    <PostComposer :default-author="auth.user.name" :games="games.games" @submit="handleSubmit" />
 
-    <PostList :posts="posts" @like="toggleLike" @delete="deletePost" />
+    <div class="text-xs text-white/50">
+      Posts: <span class="text-white/80">{{ postCount }}</span>
+    </div>
+
+    <PostList :posts="posts" @like="feed.toggleLike" @delete="feed.deletePost" />
   </section>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import PostComposer from "../components/feed/PostComposer.vue";
-import PostList from "../components/feed/PostList.vue";
+import { computed, watch } from "vue"
+import { useFeedStore } from "../stores/useFeedStore"
+import { useAuthStore } from "../stores/useAuthStore"
+import { useGamesStore } from "../stores/useGamesStore"
+import { useUiStore } from "../stores/useUiStore"
 
-const posts = ref([
-  {
-    id: 1,
-    author: "Alex",
-    game: "Baldur’s Gate 3",
-    content: "Just discovered a new build and it’s absolutely broken 😭",
-    liked: false,
-    likes: 12,
+import PostComposer from "../components/feed/PostComposer.vue"
+import PostList from "../components/feed/PostList.vue"
+
+const feed = useFeedStore()
+const auth = useAuthStore()
+const games = useGamesStore()
+const ui = useUiStore()
+
+const posts = computed(() => feed.posts)
+const postCount = computed(() => feed.postCount)
+const nextId = computed(() => {
+  const maxId = feed.posts.reduce((m, p) => Math.max(m, Number(p.id) || 0), 0)
+  return maxId + 1
+})
+
+function handleSubmit({ author, game, content }) {
+  const post = {
+    id: nextId.value,
+    author: author || auth.user.name,
     createdAt: "just now",
-  },
-  {
-    id: 2,
-    author: "Sofi",
-    game: "Pathfinder: WotR",
-    content: "My paladin is one bad dialogue choice away from chaos.",
-    liked: true,
-    likes: 41,
-    createdAt: "2h ago",
-  },
-]);
-
-function addPost(payload) {
-  const newPost = {
-    id: Date.now(),
-    author: payload.author,
-    game: payload.game,
-    content: payload.content,
+    game: game || "BG3",
+    content,
     liked: false,
     likes: 0,
-    createdAt: "just now",
-  };
-  posts.value = [newPost, ...posts.value];
+  }
+
+  feed.addPost(post)
+  ui.showToast("Posted ✅")
 }
 
-function toggleLike(postId) {
-  posts.value = posts.value.map((p) => {
-    if (p.id !== postId) return p;
-    const liked = !p.liked;
-    const likes = liked ? p.likes + 1 : Math.max(0, p.likes - 1);
-    return { ...p, liked, likes };
-  });
-}
-
-function deletePost(postId) {
-  posts.value = posts.value.filter((p) => p.id !== postId);
-}
+watch(
+  () => feed.posts.length,
+  (n, o) => {
+    if (n > o) ui.setLoading(false)
+  },
+)
 </script>

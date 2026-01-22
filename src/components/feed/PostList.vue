@@ -1,20 +1,20 @@
 <template>
-  <div class="space-y-3">
+  <section class="space-y-4">
     <PostCard
-      v-for="post in posts"
-      :key="post.id"
-      :post="post"
-      @like="$emit('like', post.id)"
-      @delete="$emit('delete', post.id)"
+      v-for="p in posts"
+      :key="p.id"
+      :post="p"
+      @like="$emit('like', p.id)"
+      @delete="$emit('delete', p.id)"
     />
-  </div>
+  </section>
 </template>
 
 <script setup>
-import PostCard from "./PostCard.vue";
+import PostCard from "./PostCard.vue"
 
 defineProps({
   posts: { type: Array, required: true },
-});
-defineEmits(["like", "delete"]);
+})
+defineEmits(["like", "delete"])
 </script>

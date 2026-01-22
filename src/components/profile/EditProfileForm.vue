@@ -45,9 +45,7 @@
       </label>
 
       <label class="block">
-        <div class="mb-1 text-sm text-white/70">
-          Favorite games (comma separated)
-        </div>
+        <div class="mb-1 text-sm text-white/70">Favorite games (comma separated)</div>
         <input
           v-model="gamesText"
           class="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white/90 outline-none focus:border-white/20"
@@ -74,13 +72,13 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, watch } from "vue"
 
 const props = defineProps({
   initial: { type: Object, required: true },
-});
+})
 
-const emit = defineEmits(["submit", "cancel"]);
+const emit = defineEmits(["submit", "cancel"])
 
 const form = reactive({
   name: "",
@@ -89,33 +87,33 @@ const form = reactive({
   bio: "",
   location: "",
   games: [],
-});
+})
 
-const gamesText = ref("");
+const gamesText = ref("")
 
 watch(
   () => props.initial,
   (v) => {
-    form.name = v.name || "";
-    form.handle = v.handle || "";
-    form.tagline = v.tagline || "";
-    form.bio = v.bio || "";
-    form.location = v.location || "";
-    form.games = Array.isArray(v.games) ? v.games : [];
-    gamesText.value = form.games.join(", ");
+    form.name = v.name || ""
+    form.handle = v.handle || ""
+    form.tagline = v.tagline || ""
+    form.bio = v.bio || ""
+    form.location = v.location || ""
+    form.games = Array.isArray(v.games) ? v.games : []
+    gamesText.value = form.games.join(", ")
   },
   { immediate: true },
-);
+)
 
 function submit() {
   const games = gamesText.value
     .split(",")
     .map((s) => s.trim())
-    .filter(Boolean);
+    .filter(Boolean)
 
   emit("submit", {
     ...form,
     games,
-  });
+  })
 }
 </script>

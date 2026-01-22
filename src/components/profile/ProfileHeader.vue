@@ -10,9 +10,7 @@
     <div class="flex-1">
       <div class="flex items-center gap-2">
         <h1 class="text-2xl font-bold text-white/90">{{ user.name }}</h1>
-        <span
-          class="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/70"
-        >
+        <span class="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/70">
           @{{ user.handle }}
         </span>
       </div>
@@ -34,19 +32,19 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-});
+})
 
-defineEmits(["edit"]);
+defineEmits(["edit"])
 
 const initials = computed(() => {
-  const parts = (props.user.name || "").trim().split(/\s+/);
+  const parts = (props.user.name || "").trim().split(/\s+/)
   return (
     parts
       .slice(0, 2)
       .map((p) => p[0]?.toUpperCase())
       .join("") || "GN"
-  );
-});
+  )
+})
 
-import { computed } from "vue";
+import { computed } from "vue"
 </script>

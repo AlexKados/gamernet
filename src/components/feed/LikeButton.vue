@@ -13,6 +13,6 @@
 defineProps({
   liked: { type: Boolean, default: false },
   likes: { type: Number, default: 0 },
-});
-defineEmits(["toggle"]);
+})
+defineEmits(["toggle"])
 </script>

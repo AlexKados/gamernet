@@ -13,6 +13,6 @@
 defineProps({
   type: { type: String, default: "button" },
   disabled: { type: Boolean, default: false },
-});
-defineEmits(["click"]);
+})
+defineEmits(["click"])
 </script>

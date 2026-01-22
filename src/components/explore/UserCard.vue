@@ -23,10 +23,10 @@
 </template>
 
 <script setup>
-import BaseButton from "../ui/BaseButton.vue";
+import BaseButton from "../ui/BaseButton.vue"
 
 defineProps({
   user: { type: Object, required: true },
-});
-defineEmits(["toggle-follow"]);
+})
+defineEmits(["toggle-follow"])
 </script>

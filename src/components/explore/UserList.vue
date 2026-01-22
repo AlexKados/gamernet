@@ -10,10 +10,10 @@
 </template>
 
 <script setup>
-import UserCard from "./UserCard.vue";
+import UserCard from "./UserCard.vue"
 
 defineProps({
   users: { type: Array, required: true },
-});
-defineEmits(["toggle-follow"]);
+})
+defineEmits(["toggle-follow"])
 </script>

@@ -13,5 +13,5 @@
 <script setup>
 defineProps({
   games: { type: Array, required: true },
-});
+})
 </script>
