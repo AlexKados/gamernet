@@ -7,6 +7,8 @@ import commentRoutes from "./routes/commentRoutes.js"
 import gameRoutes from "./routes/gameRoutes.js"
 import profileRoutes from "./routes/profileRoutes.js"
 import likeRoutes from "./routes/likeRoutes.js"
+import authRoutes from "./routes/authRoutes.js"
+
 
 const app = express()
 const PORT = 3000
@@ -34,6 +36,8 @@ app.use("/api/comments", commentRoutes)
 app.use("/api/games", gameRoutes)
 app.use("/api/profiles", profileRoutes)
 app.use("/api/likes", likeRoutes)
+app.use("/api/auth", authRoutes)
+
 
 // Hello world
 app.get("/", (req, res) => {
@@ -45,6 +49,9 @@ async function start() {
   try {
     await sequelize.authenticate()
     console.log("✅ Database connection established")
+
+    await sequelize.sync()
+    console.log("✅ Database synced (tables updated)")
 
     app.listen(PORT, () => {
       console.log(`✅ Server running on http://localhost:${PORT}`)

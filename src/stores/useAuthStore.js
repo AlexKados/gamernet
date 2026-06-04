@@ -1,20 +1,41 @@
 import { defineStore } from "pinia"
+import { api, setTokens, clearTokens, getAccessToken } from "../services/api"
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
-    user: { id: 99, name: "Alex", handle: "alexk", status: "online" },
-    isLoggedIn: true,
+    user: null,
+    isLoggedIn: !!getAccessToken(),
   }),
   getters: {
-    displayName: (s) => `${s.user.name} (@${s.user.handle})`,
-    userId: (s) => s.user.id,
+    displayName: (s) => (s.user ? `${s.user.username}` : "Guest"),
+    userId: (s) => (s.user ? s.user.id : null),
   },
   actions: {
-    login(handle) {
-      this.user.handle = handle || this.user.handle
-      this.isLoggedIn = true
+    async register({ username, email, password, displayName }) {
+      // Create the account, then log in automatically
+      await api.post("/auth/register", { username, email, password, displayName })
+      return this.login({ username, password })
     },
-    logout() {
+
+    async login({ username, password }) {
+      const data = await api.post("/auth/login", { username, password })
+      setTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken })
+      this.user = data.user
+      this.isLoggedIn = true
+      return data.user
+    },
+
+    async logout() {
+      try {
+        const refreshToken = localStorage.getItem("refreshToken")
+        if (refreshToken) {
+          await api.post("/auth/logout", { refreshToken })
+        }
+      } catch {
+        // ignore network errors on logout
+      }
+      clearTokens()
+      this.user = null
       this.isLoggedIn = false
     },
   },

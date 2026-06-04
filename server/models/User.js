@@ -13,6 +13,14 @@ const User = sequelize.define("User", {
     unique: true,
     validate: { isEmail: true },
   },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  refreshToken: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 })
 
 export default User

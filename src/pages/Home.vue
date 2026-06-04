@@ -8,7 +8,7 @@
       </p>
     </header>
 
-    <PostComposer :default-author="auth.user.name" :games="games.games" @submit="handleSubmit" />
+<PostComposer :default-author="auth.user?.username || 'Guest'" :games="games.games" @submit="handleSubmit" />
 
     <div class="text-xs text-white/50">
       Posts: <span class="text-white/80">{{ postCount }}</span>
@@ -49,7 +49,7 @@ async function handleSubmit({ author, game, content }) {
       content,
       userId: 1,
       gameId: 1,
-      author: author || auth.user.name,
+      author: author || auth.user?.username || "Guest",
       game: game || "BG3",
     })
     ui.showToast("Posted ✅")
