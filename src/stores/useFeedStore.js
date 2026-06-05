@@ -58,6 +58,14 @@ export const useFeedStore = defineStore("feed", {
           ...this.posts,
         ]
       })
+
+      // Live like-count updates from other clients
+      socket.off("post:liked")
+      socket.on("post:liked", ({ postId, likesCount }) => {
+        this.posts = this.posts.map((p) =>
+          p.id === postId ? { ...p, likes: likesCount } : p
+        )
+      })
     },
 
     // ─── POST /api/posts ────────────────────────────────────
@@ -96,12 +104,24 @@ export const useFeedStore = defineStore("feed", {
       }
     },
 
-    toggleLike(id) {
-      this.posts = this.posts.map((p) => {
-        if (p.id !== id) return p
-        const nextLiked = !p.liked
-        return { ...p, liked: nextLiked, likes: p.likes + (nextLiked ? 1 : -1) }
-      })
+    async toggleLike(id, userId) {
+      // Flip the heart immediately for snappy UX
+      this.posts = this.posts.map((p) =>
+        p.id === id ? { ...p, liked: !p.liked } : p
+      )
+      try {
+        const res = await api.post("/likes", { userId, postId: id })
+        // Sync the real count from the server
+        this.posts = this.posts.map((p) =>
+          p.id === id ? { ...p, likes: res.likesCount, liked: res.liked } : p
+        )
+      } catch (err) {
+        this.error = err.message
+        // Revert the heart if it failed
+        this.posts = this.posts.map((p) =>
+          p.id === id ? { ...p, liked: !p.liked } : p
+        )
+      }
     },
   },
 })

@@ -16,7 +16,7 @@
       <span v-if="feed.error" class="ml-2 text-red-400">Error: {{ feed.error }}</span>
     </div>
 
-    <PostList :posts="posts" @like="feed.toggleLike" @delete="handleDelete" />
+    <PostList :posts="posts" @like="handleLike" @delete="handleDelete" />
   </section>
 </template>
 
@@ -66,6 +66,14 @@ async function handleDelete(id) {
   } catch (err) {
     ui.showToast(`Failed: ${err.message}`)
   }
+}
+
+function handleLike(id) {
+  if (!auth.isLoggedIn) {
+    ui.showToast("Log in to like posts")
+    return
+  }
+  feed.toggleLike(id, auth.userId)
 }
 
 watch(

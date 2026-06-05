@@ -3,39 +3,34 @@ import { Like, Post } from "../models/index.js"
 
 const router = express.Router()
 
-// ─── POST /api/likes — toggle like (like if not liked, unlike if liked) ───
+// ─── POST /api/likes — toggle like (emits WebSocket event) ────
 router.post("/", async (req, res) => {
   try {
     const { userId, postId } = req.body
 
-    // Check if this user has already liked this post
     const existing = await Like.findOne({ where: { userId, postId } })
-
-    if (existing) {
-      // Already liked → unlike (delete it)
-      await existing.destroy()
-
-      // Decrement the post's likesCount
-      const post = await Post.findByPk(postId)
-      if (post) {
-        post.likesCount = Math.max(0, post.likesCount - 1)
-        await post.save()
-      }
-
-      return res.json({ liked: false, message: "Unliked" })
-    }
-
-    // Not liked yet → create the like
-    await Like.create({ userId, postId })
-
-    // Increment the post's likesCount
     const post = await Post.findByPk(postId)
-    if (post) {
-      post.likesCount = post.likesCount + 1
-      await post.save()
-    }
+    if (!post) return res.status(404).json({ error: "Post not found" })
 
-    res.status(201).json({ liked: true, message: "Liked" })
+    let liked
+    if (existing) {
+      // Already liked → unlike
+      await existing.destroy()
+      post.likesCount = Math.max(0, post.likesCount - 1)
+      liked = false
+    } else {
+      // Not liked → like
+      await Like.create({ userId, postId })
+      post.likesCount = post.likesCount + 1
+      liked = true
+    }
+    await post.save()
+
+    // Broadcast the new like count to all connected clients
+    const io = req.app.get("io")
+    io.emit("post:liked", { postId: post.id, likesCount: post.likesCount })
+
+    res.json({ liked, likesCount: post.likesCount })
   } catch (error) {
     res.status(400).json({ error: error.message })
   }
