@@ -16,6 +16,28 @@
         >
           {{ item.label }}
         </RouterLink>
+
+        <!-- Auth section -->
+        <div class="ml-2 flex items-center gap-2 border-l border-white/10 pl-3">
+          <template v-if="auth.isLoggedIn">
+            <span class="text-sm text-white/70">
+              👤 {{ auth.displayName }}
+            </span>
+            <button
+              class="rounded-lg bg-white/10 px-3 py-2 text-sm text-white/80 hover:bg-white/20"
+              @click="handleLogout"
+            >
+              Log out
+            </button>
+          </template>
+          <RouterLink
+            v-else
+            to="/login"
+            class="rounded-lg bg-indigo-500/80 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+          >
+            Log in
+          </RouterLink>
+        </div>
       </nav>
     </div>
   </header>
@@ -23,9 +45,14 @@
 
 <script setup>
 import { computed } from "vue"
-import { useRoute, RouterLink } from "vue-router"
+import { useRoute, useRouter, RouterLink } from "vue-router"
+import { useAuthStore } from "../../stores/useAuthStore"
+import { useUiStore } from "../../stores/useUiStore"
 
 const route = useRoute()
+const router = useRouter()
+const auth = useAuthStore()
+const ui = useUiStore()
 
 const nav = computed(() => [
   { label: "Home", to: "/" },
@@ -44,8 +71,13 @@ const nav = computed(() => [
 ])
 
 function isActive(path) {
-  // for dynamic routes like /post/1, highlight "Post" when path starts with /post
   if (path.startsWith("/post/")) return route.path.startsWith("/post/")
   return route.path === path
+}
+
+async function handleLogout() {
+  await auth.logout()
+  ui.showToast("Logged out")
+  router.push("/login")
 }
 </script>
