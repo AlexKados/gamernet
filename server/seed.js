@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs"
 import { sequelize, User, Profile, Game, Post, Comment, Like } from "./models/index.js"
 
 async function seed() {
@@ -6,10 +7,11 @@ async function seed() {
     console.log("🧹 Tables wiped + recreated")
 
     // ─── USERS ─────────────────────────────────────────────────
-    const alex = await User.create({ username: "alex", email: "alex@gamernet.com" })
-    const nina = await User.create({ username: "nina", email: "nina@gamernet.com" })
-    const tom = await User.create({ username: "tom", email: "tom@gamernet.com" })
-    const kiki = await User.create({ username: "kiki", email: "kiki@gamernet.com" })
+    const pw = await bcrypt.hash("demo123", 10)
+    const alex = await User.create({ username: "alex", email: "alex@gamernet.com", password: pw })
+    const nina = await User.create({ username: "nina", email: "nina@gamernet.com", password: pw })
+    const tom = await User.create({ username: "tom", email: "tom@gamernet.com", password: pw })
+    const kiki = await User.create({ username: "kiki", email: "kiki@gamernet.com", password: pw })
     console.log("👤 4 users created")
 
     // ─── PROFILES (one-to-one with User) ───────────────────────

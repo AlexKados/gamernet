@@ -53,12 +53,25 @@ router.get("/:id/comments", async (req, res) => {
   }
 })
 
-// ─── POST /api/posts — create a post ──────────────────────────
+// ─── POST /api/posts — create a post (emits WebSocket event) ──
 router.post("/", async (req, res) => {
   try {
     const { content, userId, gameId } = req.body
     const post = await Post.create({ content, userId, gameId })
-    res.status(201).json(post)
+
+    // Re-fetch with author + game so the live update has full data
+    const fullPost = await Post.findByPk(post.id, {
+      include: [
+        { model: User, attributes: ["id", "username"] },
+        { model: Game, attributes: ["id", "name", "genre"] },
+      ],
+    })
+
+    // Broadcast to all connected clients in real time
+    const io = req.app.get("io")
+    io.emit("post:created", fullPost)
+
+    res.status(201).json(fullPost)
   } catch (error) {
     res.status(400).json({ error: error.message })
   }

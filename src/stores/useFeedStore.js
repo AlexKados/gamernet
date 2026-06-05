@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
 import { api } from "../services/api"
+import { socket } from "../services/socket"
 
 export const useFeedStore = defineStore("feed", {
   state: () => ({
@@ -35,6 +36,28 @@ export const useFeedStore = defineStore("feed", {
       } finally {
         this.loading = false
       }
+    },
+
+    // ─── WebSocket: listen for posts created by OTHER clients ──
+    initRealtime() {
+      socket.off("post:created")
+      socket.on("post:created", (p) => {
+        if (this.posts.some((existing) => existing.id === p.id)) return
+        this.posts = [
+          {
+            id: p.id,
+            author: p.User?.username || "unknown",
+            createdAt: "just now",
+            game: p.Game?.name || "Unknown game",
+            content: p.content,
+            liked: false,
+            likes: p.likesCount || 0,
+            userId: p.userId,
+            gameId: p.gameId,
+          },
+          ...this.posts,
+        ]
+      })
     },
 
     // ─── POST /api/posts ────────────────────────────────────

@@ -41,6 +41,7 @@ const postCount = computed(() => feed.postCount)
 // Load posts from the API as soon as the page mounts
 onMounted(() => {
   feed.fetchPosts()
+  feed.initRealtime()
 })
 
 async function handleSubmit({ author, game, content }) {
