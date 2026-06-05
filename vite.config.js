@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
 import tailwindcss from "@tailwindcss/vite"
@@ -20,16 +21,8 @@ export default defineConfig({
         scope: "/gamernet/",
         start_url: "/gamernet/",
         icons: [
-          {
-            src: "/gamernet/pwa-192x192.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "/gamernet/pwa-512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-          },
+          { src: "/gamernet/pwa-192x192.png", sizes: "192x192", type: "image/png" },
+          { src: "/gamernet/pwa-512x512.png", sizes: "512x512", type: "image/png" },
           {
             src: "/gamernet/pwa-512x512.png",
             sizes: "512x512",
@@ -38,10 +31,25 @@ export default defineConfig({
           },
         ],
       },
-      devOptions: {
-        enabled: true,
-      },
+      devOptions: { enabled: true },
     }),
   ],
   base: "/gamernet/",
+  test: {
+    globals: true,
+    environment: "jsdom",
+    fileParallelism: false,
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      // Scope coverage to testable logic (not .vue components / config)
+      include: ["src/stores/**/*.js", "src/services/**/*.js"],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
+      },
+    },
+  },
 })
